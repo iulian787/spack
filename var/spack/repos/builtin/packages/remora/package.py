@@ -57,7 +57,7 @@ class Remora(CMakePackage):
 
     depends_on("cmake", type="build")
 
-    depends_on("netcdf-c build_system=cmake")
+    depends_on("netcdf-c build_system=cmake", when="+netcdf")
 
     depends_on("mpi", when="+mpi")
     depends_on("cuda", when="+cuda")
@@ -67,6 +67,7 @@ class Remora(CMakePackage):
             self.define_from_variant("REMORA_ENABLE_DOCUMENTATION", "doc"),
             self.define_from_variant("REMORA_ENABLE_ALL_WARNINGS", "warnings"),
             self.define_from_variant("REMORA_ENABLE_TESTS", "tests"),
+            self.define_from_variant("REMORA_ENABLE_NETCDF","netcdf"),
 	    self.define_from_variant("REMORA_ENABLE_MPI", "mpi"),
 	    self.define_from_variant("REMORA_ENABLE_OPENMP", "openmp"),
 	    self.define_from_variant("REMORA_ENABLE_CUDA", "cuda")
