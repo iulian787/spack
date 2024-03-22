@@ -4,20 +4,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 # ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
 #     spack install remora
 #
 # You can edit this file again by typing:
 #
 #     spack edit remora
-#
-# See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
 
 from spack.package import *
@@ -36,7 +27,7 @@ class Remora(CMakePackage):
     homepage = "https://roms-x.readthedocs.io/en/latest/index.html`"
 
     url = "https://github.com/iulian787/REMORA/archive/refs/tags/r0.9.tar.gz"
-    git = "https://github.com/iulian787/REMORA.git"
+    git = "git@github.com:seahorce-scidac/REMORA.git"
     version("development", branch="development", submodules=True) 
 
     # FIXME: Add a list of GitHub accounts to
@@ -50,19 +41,34 @@ class Remora(CMakePackage):
 
     version("0.9", sha256="c2dec85877daea6e8c392ffff1ea86d22965ff021f0c0a1019d74936328ea40d")
 
-    # FIXME: Add dependencies if required.
+    variant("doc", default=False, description="Build documentation") # option(REMORA_ENABLE_DOCUMENTATION "Build documentation" OFF)
+    variant("warnings", default=False, description="Enable all compiler warnings") # option(REMORA_ENABLE_ALL_WARNINGS  "Enable all compiler warnings" OFF)
+    variant("tests", default=False, description="Enable regression and unit tests") # option(REMORA_ENABLE_TESTS         "Enable regression and unit tests" OFF)
+    variant("netcdf", default=False, description="Enable NetCDF IO") # option(REMORA_ENABLE_NETCDF        "Enable NetCDF IO" OFF)
+    # option(REMORA_ENABLE_HDF5          "Enable HDF5 IO" ${REMORA_ENABLE_NETCDF})
+    # option(REMORA_ENABLE_FCOMPARE "Enable building fcompare when not testing" OFF)
 
-    variant("mpi", default=True, description="Enable parallel ")
+#Options for performance
+    variant("mpi", default=False, description="Enable MPI ")      # option(REMORA_ENABLE_MPI    "Enable MPI"    OFF)
+    variant("openmp", default=False, description="Enable OpenMP") # option(REMORA_ENABLE_OPENMP "Enable OpenMP" OFF)
+    variant("cuda", default=False, description="Enable CUDA")     # option(REMORA_ENABLE_CUDA   "Enable CUDA"   OFF)
+    variant("hip", default=False, description="Enable HIP")       # option(REMORA_ENABLE_HIP    "Enable HIP"    OFF)
+    variant("sycl", default=False, description="Enable SYCL")     # option(REMORA_ENABLE_SYCL   "Enable SYCL"   OFF)
 
     depends_on("cmake", type="build")
 
     depends_on("netcdf-c build_system=cmake")
 
     depends_on("mpi", when="+mpi")
+    depends_on("cuda", when="+cuda")
 
     def cmake_args(self):
-        # FIXME: Add arguments other than
-        # FIXME: CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE
-        # FIXME: If not needed delete this function
-        args = []
+        args = [
+            self.define_from_variant("REMORA_ENABLE_DOCUMENTATION", "doc"),
+            self.define_from_variant("REMORA_ENABLE_ALL_WARNINGS", "warnings"),
+            self.define_from_variant("REMORA_ENABLE_TESTS", "tests"),
+	    self.define_from_variant("REMORA_ENABLE_MPI", "mpi"),
+	    self.define_from_variant("REMORA_ENABLE_OPENMP", "openmp"),
+	    self.define_from_variant("REMORA_ENABLE_CUDA", "cuda")
+	]
         return args
