@@ -29,6 +29,7 @@ class Remora(CMakePackage):
     url = "https://github.com/iulian787/REMORA/archive/refs/tags/r0.9.tar.gz"
     git = "git@github.com:seahorce-scidac/REMORA.git"
     version("development", branch="development", submodules=True) 
+    version("beta", branch="beta", submodules=True) 
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
